@@ -2,8 +2,8 @@
 ; Subroutine calculate an angle
 
 ; input:
-;	d1 = x-axis distance
-;	d2 = y-axis distance
+;	d1 = x-axis speed
+;	d2 = y-axis speed
 
 ; output:
 ;	d0 = angle
@@ -13,13 +13,13 @@
 
 
 CalcAngle:
-		movem.l	d3-d4,-(sp)
-		moveq	#0,d3
-		moveq	#0,d4
-		move.w	d1,d3
-		move.w	d2,d4
-		or.w	d3,d4
-		beq.s	loc_2D04
+		movem.l	d3-d4,-(sp)                 ; save registers to stack
+		moveq	#0,d3                       ; clear d3
+		moveq	#0,d4                       ; clear d4
+		move.w	d1,d3                       ; copy x vector to d3
+		move.w	d2,d4                       ; copy y vector to d4
+		or.w	d3,d4                       ; see if both vectors are zero
+		beq.s	loc_2D04                    ; if so jump ahead
 		move.w	d2,d4
 		tst.w	d3
 		bpl.w	loc_2CC2

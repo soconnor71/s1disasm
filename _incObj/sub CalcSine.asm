@@ -13,18 +13,18 @@
 
 
 CalcSine:
-		andi.w	#$FF,d0
-		add.w	d0,d0
-		addi.w	#$80,d0
-		move.w	Sine_Data(pc,d0.w),d1
-		subi.w	#$80,d0
-		move.w	Sine_Data(pc,d0.w),d0
+		andi.w	#$FF,d0                     ; limit angle to 0-$ff
+		add.w	d0,d0                       ; double the value as each table entry is a word
+		addi.w	#$80,d0                     ; add 90 degrees to the angle to get a cos value ($40 is 90 degrees, but 2 bytes per entry so $80)
+		move.w	Sine_Data(pc,d0.w),d1       ; get the cos value back
+		subi.w	#$80,d0                     ; subtract 90 degrees
+		move.w	Sine_Data(pc,d0.w),d0       ; get the sine value back in d0
 		rts	
 ; End of function CalcSine
 
 ; ===========================================================================
 
-Sine_Data:	incbin	"misc\sinewave.bin"	; values for a 360º sine wave
+Sine_Data:	incbin	"misc\sinewave.bin"	; values for a 360ï¿½ sine wave
 
 ; ===========================================================================
 
