@@ -1,10 +1,27 @@
 ; ---------------------------------------------------------------------------
-; Subroutine to	find the floor
-
+; Subroutine to	find the distance to the floor
+; Looking at the maps, there are never more than two tiles that actually
+; use a height map, therefore these routines will look up and down to find
+; the next tile if a collision is not located with the given collision point
+;
+; a tile has the following format:
+;   0SSYX0TTTTTTTTTT
+;   SS = 00:  Not solid
+;        01:  Top Solid
+;        10:  Bottom, left and right solid
+;        11:  Solid
+;   Y = flip in y
+;   X = flip in x
+;   T = the tile id to use
+;
 ; input:
-;	d2 = y-position of object's bottom edge
-;	d3 = x-position of object
+;	d2 = y-position of point to test
+;	d3 = x-position of point to test
 ;	d5 = bit to test for solidness
+;   d6 = value to EOR with
+;   a3 = amount to add to y position if we need to check for another tile (usually 16, the width of a single tile)
+;   a4 = address of where to write the computed angle from the height map tile
+
 
 ; output:
 ;	d1 = distance to the floor
@@ -17,33 +34,33 @@
 
 
 FindFloor:
-		bsr.s	FindNearestTile
-		move.w	(a1),d0		; get value for solidness, orientation and 16x16 tile number
-		move.w	d0,d4
-		andi.w	#$7FF,d0
-		beq.s	@isblank	; branch if tile is blank
-		btst	d5,d4		; is the tile solid?
-		bne.s	@issolid	; if yes, branch
+		bsr.s	FindNearestTile ; returns address of tile that contains sample point
+		move.w	(a1),d0		    ; get the tile meta data
+		move.w	d0,d4           ; save the data to d4
+		andi.w	#$7FF,d0        ; mask out just the tile id
+		beq.s	@isblank	    ; branch if tile is blank
+		btst	d5,d4		    ; d5 is used to determine which bit to test to see if we are solid (we can either test for top solid, or bottom left and right solid)
+		bne.s	@issolid	    ; if yes, branch
 
 @isblank:
-		add.w	a3,d2
-		bsr.w	FindFloor2	; try tile below the nearest
-		sub.w	a3,d2
-		addi.w	#$10,d1		; return distance to floor
+		add.w	a3,d2           ; add the given offset to move us to the next tile
+		bsr.w	FindFloor2	    ; try to find the distance from this tile
+		sub.w	a3,d2           ; adjust the y position back to where it was
+		addi.w	#$10,d1		    ; add 16 to distance to tile, though this should probably be adding a3 really
 		rts	
 ; ===========================================================================
 
 @issolid:
-		movea.l	(v_collindex).w,a2
-		move.b	(a2,d0.w),d0	; get collision block number
-		andi.w	#$FF,d0
-		beq.s	@isblank	; branch if 0
-		lea	(AngleMap).l,a2
-		move.b	(a2,d0.w),(a4)	; get collision angle value
-		lsl.w	#4,d0
-		move.w	d3,d1		; get x-pos. of object
-		btst	#$B,d4		; is block flipped horizontally?
-		beq.s	@noflip		; if not, branch
+		movea.l	(v_collindex).w,a2  ; get base address of the collision map table
+		move.b	(a2,d0.w),d0	    ; index the collision id table based on tile id to get the collision id
+		andi.w	#$FF,d0             ; see if any bits set
+		beq.s	@isblank	        ; branch if 0, and try the next tile down
+		lea	(AngleMap).l,a2         ; get base address of angle map for tiles
+		move.b	(a2,d0.w),(a4)	    ; get the angle value for the current height map table and store in the address given in a4
+		lsl.w	#4,d0               ; there are 16 entries in each height table entry, so mult collision id by 16 to get offset into height table
+		move.w	d3,d1		        ; get x-pos. of object
+		btst	#$B,d4		        ; is block flipped horizontally?
+		beq.s	@noflip		        ; if not, branch
 		not.w	d1
 		neg.b	(a4)
 
