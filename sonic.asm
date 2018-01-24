@@ -2652,13 +2652,15 @@ MusicList:
 
 ; ---------------------------------------------------------------------------
 ; Level
+; handle demo level     : $08
+; handle normal level   : $0c
 ; ---------------------------------------------------------------------------
 
 GM_Level:
-		bset	#7,(v_gamemode).w ; add $80 to screen mode (for pre level sequence)
-		tst.w	(f_demo).w
-		bmi.s	Level_NoMusicFade
-		sfx	bgm_Fade,0,1,1 ; fade out music
+		bset	#7,(v_gamemode).w       ; set bit 7 of the screen mode (adds $80 to value)
+		tst.w	(f_demo).w              ; see if in demo mode
+		bmi.s	Level_NoMusicFade       ; if not no need to fade music
+		sfx	bgm_Fade,0,1,1          ; fade out music
 
 	Level_NoMusicFade:
 		bsr.w	ClearPLC
@@ -2670,73 +2672,73 @@ GM_Level:
 		lea	(Nem_TitleCard).l,a0 ; load title card patterns
 		bsr.w	NemDec
 		enable_ints
-		moveq	#0,d0
-		move.b	(v_zone).w,d0
-		lsl.w	#4,d0
-		lea	(LevelHeaders).l,a2
-		lea	(a2,d0.w),a2
-		moveq	#0,d0
-		move.b	(a2),d0
-		beq.s	loc_37FC
-		bsr.w	AddPLC		; load level patterns
+		moveq	#0,d0                   ; clear d0
+		move.b	(v_zone).w,d0           ; put current zone number into d0
+		lsl.w	#4,d0                   ; multiple by 16 to get offset into level header table
+		lea	(LevelHeaders).l,a2     ; address of table into a2
+		lea	(a2,d0.w),a2            ; address of start of current level into a2
+		moveq	#0,d0                   ; clear d0
+		move.b	(a2),d0                 ; get first byte of level header
+		beq.s	loc_37FC                ; if zero contunue on
+		bsr.w	AddPLC		        ; else load level patterns
 
 loc_37FC:
 		moveq	#plcid_Main2,d0
 		bsr.w	AddPLC		; load standard	patterns
 
 Level_ClrRam:
-		lea	(v_objspace).w,a1
-		moveq	#0,d0
-		move.w	#$7FF,d1
+		lea	(v_objspace).w,a1       ; get start of object ram
+		moveq	#0,d0                   ; clear d0
+		move.w	#$7FF,d1                ; get number of longwords to clear
 
 	Level_ClrObjRam:
-		move.l	d0,(a1)+
-		dbf	d1,Level_ClrObjRam ; clear object RAM
+		move.l	d0,(a1)+                ; clear longword at current address
+		dbf	d1,Level_ClrObjRam      ; continue till all $7ff longwords done
 
-		lea	($FFFFF628).w,a1
-		moveq	#0,d0
-		move.w	#$15,d1
+		lea	($FFFFF628).w,a1        ; get address of misc variables
+		moveq	#0,d0                   ; clear d0
+		move.w	#$15,d1                 ; set longword count to $15
 
 	Level_ClrVars1:
-		move.l	d0,(a1)+
-		dbf	d1,Level_ClrVars1 ; clear misc variables
+		move.l	d0,(a1)+                ; clear current longword
+		dbf	d1,Level_ClrVars1       ; continue till all longwords cleared
 
-		lea	(v_screenposx).w,a1
-		moveq	#0,d0
-		move.w	#$3F,d1
+		lea	(v_screenposx).w,a1     ; get variable start address
+		moveq	#0,d0                   ; clear d0
+		move.w	#$3F,d1                 ; get number of longwords to clear
 
 	Level_ClrVars2:
-		move.l	d0,(a1)+
-		dbf	d1,Level_ClrVars2 ; clear misc variables
+		move.l	d0,(a1)+                ; clear current longword
+		dbf	d1,Level_ClrVars2       ; continue till all longwords cleared
 
-		lea	(v_oscillate+2).w,a1
-		moveq	#0,d0
-		move.w	#$47,d1
+		lea	(v_oscillate+2).w,a1    ; load oscillate base address
+		moveq	#0,d0                   ; clear d0
+		move.w	#$47,d1                 ; long number of longwords to clear
 
 	Level_ClrVars3:
-		move.l	d0,(a1)+
-		dbf	d1,Level_ClrVars3 ; clear object variables
+		move.l	d0,(a1)+                ; clear current longword
+		dbf	d1,Level_ClrVars3       ; continue till all longwords cleared
 
-		disable_ints
-		bsr.w	ClearScreen
-		lea	(vdp_control_port).l,a6
-		move.w	#$8B03,(a6)	; line scroll mode
-		move.w	#$8200+(vram_fg>>10),(a6) ; set foreground nametable address
-		move.w	#$8400+(vram_bg>>13),(a6) ; set background nametable address
-		move.w	#$8500+(vram_sprites>>9),(a6) ; set sprite table address
-		move.w	#$9001,(a6)		; 64-cell hscroll size
-		move.w	#$8004,(a6)		; 8-colour mode
-		move.w	#$8720,(a6)		; set background colour (line 3; colour 0)
-		move.w	#$8A00+223,(v_hbla_hreg).w ; set palette change position (for water)
+		disable_ints                            ; switch off interupts
+		bsr.w	ClearScreen                     ; clear display screen
+		lea	(vdp_control_port).l,a6         ; get addres of display port
+		move.w	#$8B03,(a6)	                ; line scroll mode
+		move.w	#$8200+(vram_fg>>10),(a6)       ; set foreground nametable address
+		move.w	#$8400+(vram_bg>>13),(a6)       ; set background nametable address
+		move.w	#$8500+(vram_sprites>>9),(a6)   ; set sprite table address
+		move.w	#$9001,(a6)		        ; 64-cell hscroll size
+		move.w	#$8004,(a6)		        ; 8-colour mode
+		move.w	#$8720,(a6)		        ; set background colour (line 3; colour 0)
+		move.w	#$8A00+223,(v_hbla_hreg).w      ; set palette change position (for water)
 		move.w	(v_hbla_hreg).w,(a6)
-		cmpi.b	#id_LZ,(v_zone).w ; is level LZ?
-		bne.s	Level_LoadPal	; if not, branch
+		cmpi.b	#id_LZ,(v_zone).w               ; is level LZ?
+		bne.s	Level_LoadPal	                ; if not, branch
 
-		move.w	#$8014,(a6)	; enable H-interrupts
-		moveq	#0,d0
-		move.b	(v_act).w,d0
-		add.w	d0,d0
-		lea	(WaterHeight).l,a1 ; load water	height array
+		move.w	#$8014,(a6)	                ; enable H-interrupts
+		moveq	#0,d0                           ; clear d0
+		move.b	(v_act).w,d0                    ; get current act
+		add.w	d0,d0                           ; double act to get offset
+		lea	(WaterHeight).l,a1              ; load base address of water height array
 		move.w	(a1,d0.w),d0
 		move.w	d0,(v_waterpos1).w ; set water heights
 		move.w	d0,(v_waterpos2).w
@@ -3809,7 +3811,7 @@ End_LoadSonic:
 		bset	#0,(v_player+obStatus).w ; make Sonic face left
 		move.b	#1,(f_lockctrl).w ; lock controls
 		move.w	#(btnL<<8),(v_jpadhold2).w ; move Sonic to the left
-		move.w	#$F800,(v_player+obInertia).w ; set Sonic's speed
+		move.w	#$F800,(v_player+obVelocity).w ; set Sonic's speed
 		move.b	#id_HUD,(v_objspace+$40).w ; load HUD object
 		jsr	(ObjPosLoad).l
 		jsr	(ExecuteObjects).l
@@ -3934,7 +3936,7 @@ End_MoveSon2:
 		moveq	#0,d0
 		move.b	d0,(f_lockctrl).w
 		move.w	d0,(v_jpadhold2).w ; stop Sonic moving
-		move.w	d0,(v_player+obInertia).w
+		move.w	d0,(v_player+obVelocity).w
 		move.b	#$81,(f_lockmulti).w ; lock controls & position
 		move.b	#3,(v_player+obFrame).w
 		move.w	#(id_Wait<<8)+id_Wait,(v_player+obAnim).w ; use "standing" animation
@@ -5257,7 +5259,7 @@ loc_74DC:
 		move.b	d0,$3D(a1)
 		move.b	#0,obAngle(a1)
 		move.w	#0,obVelY(a1)
-		move.w	obVelX(a1),obInertia(a1)
+		move.w	obVelX(a1),obVelocity(a1)
 		btst	#1,obStatus(a1)
 		beq.s	loc_7512
 		move.l	a0,-(sp)
@@ -5561,7 +5563,7 @@ loc_8A7C:
 
 loc_8A82:
 		sub.w	d0,obX(a1)
-		move.w	#0,obInertia(a1)
+		move.w	#0,obVelocity(a1)
 		move.w	#0,obVelX(a1)
 
 loc_8A92:
@@ -6762,23 +6764,23 @@ Sonic_Index:	dc.w Sonic_Main-Sonic_Index
 
 Sonic_Main:	; Routine 0
 		addq.b	#2,obRoutine(a0)
-		move.b	#$13,obHeight(a0)
-		move.b	#9,obWidth(a0)
+		move.b	#$13,obHeight(a0)       ; height of sonic/2 so sonic height is 38 pixels
+		move.b	#9,obWidth(a0)          ; width of sonic/2, so sonic is 18 pixels wide
 		move.l	#Map_Sonic,obMap(a0)
 		move.w	#$780,obGfx(a0)
 		move.b	#2,obPriority(a0)
 		move.b	#$18,obActWid(a0)
 		move.b	#4,obRender(a0)
-		move.w	#$600,(v_sonspeedmax).w ; Sonic's top speed
-		move.w	#$C,(v_sonspeedacc).w ; Sonic's acceleration
-		move.w	#$80,(v_sonspeeddec).w ; Sonic's deceleration
+		move.w	#$600,(v_sonspeedmax).w ; Sonic's top speed, 6 pixels per frame
+		move.w	#$C,(v_sonspeedacc).w   ; Sonic's acceleration
+		move.w	#$80,(v_sonspeeddec).w  ; Sonic's deceleration
 
 Sonic_Control:	; Routine 2
-		tst.w	(f_debugmode).w	; is debug cheat enabled?
-		beq.s	loc_12C58	; if not, branch
-		btst	#bitB,(v_jpadpress1).w ; is button B pressed?
-		beq.s	loc_12C58	; if not, branch
-		move.w	#1,(v_debuguse).w ; change Sonic into a ring/item
+		tst.w	(f_debugmode).w 	; is debug cheat enabled?
+		beq.s	loc_12C58	        ; if not, branch
+		btst	#bitB,(v_jpadpress1).w  ; is button B pressed?
+		beq.s	loc_12C58	        ; if not, branch
+		move.w	#1,(v_debuguse).w       ; change Sonic into a ring/item
 		clr.b	(f_lockctrl).w
 		rts	
 ; ===========================================================================
@@ -6848,11 +6850,11 @@ MusicList2:
 ; ---------------------------------------------------------------------------
 
 Sonic_MdNormal:
-		bsr.w	Sonic_Jump
-		bsr.w	Sonic_SlopeResist
-		bsr.w	Sonic_Move
-		bsr.w	Sonic_Roll
-		bsr.w	Sonic_LevelBound
+		bsr.w	Sonic_Jump              ; see if jump pressed, if so set initial jump velocity
+		bsr.w	Sonic_SlopeResist       ; handle sonic resisting a slope
+		bsr.w	Sonic_Move              ; handle sonic movement
+		bsr.w	Sonic_Roll              ; handle sonic rolling
+		bsr.w	Sonic_LevelBound        ; make sure sonic stays in level
 		jsr	(SpeedToPos).l
 		bsr.w	Sonic_AnglePos
 		bsr.w	Sonic_SlopeRepel
@@ -6862,7 +6864,7 @@ Sonic_MdNormal:
 Sonic_MdJump:
 		bsr.w	Sonic_JumpHeight
 		bsr.w	Sonic_JumpDirection
-		bsr.w	Sonic_LevelBound
+		bsr.w	Sonic_LevelBound        ; make sure sonic stays with bounds of level
 		jsr	(ObjectFall).l
 		btst	#6,obStatus(a0)
 		beq.s	loc_12E5C
@@ -6914,7 +6916,7 @@ loc_12EA6:
 		bsr.w	Sonic_DontRunOnWalls
 		tst.w	d1
 		bpl.s	locret_13302
-		move.w	#0,obInertia(a0) ; stop Sonic moving
+		move.w	#0,obVelocity(a0) ; stop Sonic moving
 		move.w	#0,obVelX(a0)
 		move.w	#0,obVelY(a0)
 		move.b	#id_Warp3,obAnim(a0) ; use "warping" animation
@@ -7100,16 +7102,16 @@ loc_14CD6:
 
 
 Sonic_WalkSpeed:
-		move.l	obX(a0),d3
-		move.l	obY(a0),d2
-		move.w	obVelX(a0),d1
-		ext.l	d1
-		asl.l	#8,d1
-		add.l	d1,d3
-		move.w	obVelY(a0),d1
-		ext.l	d1
-		asl.l	#8,d1
-		add.l	d1,d2
+		move.l	obX(a0),d3              ; long word x position into d3 (upper word is interger, lower word is fraction)
+		move.l	obY(a0),d2              ; long word y position into d2
+		move.w	obVelX(a0),d1           ; get current x velocity (high byte int, low byte fraction)
+		ext.l	d1                      ; sign extend into long word
+		asl.l	#8,d1                   ; move 8 bits left, so high word is int and low word is fraction
+		add.l	d1,d3                   ; add the velocity to x pos
+		move.w	obVelY(a0),d1           ; get y velocity
+		ext.l	d1                      ; sign extend into long word
+		asl.l	#8,d1                   ; align integer and fraction parts with object y position
+		add.l	d1,d2                   ; add y velocity to x position
 		swap	d2
 		swap	d3
 		move.b	d0,(v_anglebuffer).w

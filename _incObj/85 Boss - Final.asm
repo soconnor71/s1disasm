@@ -432,7 +432,7 @@ loc_1A216:
 		blt.s	loc_1A23A
 		move.b	#1,(f_lockctrl).w
 		move.w	#0,(v_jpadhold2).w
-		clr.w	(v_player+obInertia).w
+		clr.w	(v_player+obVelocity).w
 		tst.w	obVelY(a0)
 		bpl.s	loc_1A248
 		move.w	#$100,(v_jpadhold2).w

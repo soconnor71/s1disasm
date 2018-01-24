@@ -78,7 +78,7 @@ Jun_Action:	; Routine 2
 		addq.b	#4,obRoutine(a0) ; goto Jun_Release next
 		move.b	#1,(f_lockmulti).w ; lock controls
 		move.b	#id_Roll,obAnim(a1) ; make Sonic use "rolling" animation
-		move.w	#$800,obInertia(a1)
+		move.w	#$800,obVelocity(a1)
 		move.w	#0,obVelX(a1)
 		move.w	#0,obVelY(a1)
 		bclr	#5,obStatus(a0)

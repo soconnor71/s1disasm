@@ -493,7 +493,7 @@ loc_6656:
 loc_665C:
 		cmpi.w	#$60,(v_lookshift).w
 		bne.s	loc_6684
-		move.w	(v_player+obInertia).w,d1
+		move.w	(v_player+obVelocity).w,d1
 		bpl.s	loc_666C
 		neg.w	d1
 

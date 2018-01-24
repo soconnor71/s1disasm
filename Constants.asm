@@ -129,7 +129,7 @@ obScreenY:	equ $A	; y-axis position for screen-fixed items (2 bytes)
 obY:		equ $C	; y-axis position (2-4 bytes)
 obVelX:		equ $10	; x-axis velocity (2 bytes)
 obVelY:		equ $12	; y-axis velocity (2 bytes)
-obInertia:	equ $14	; potential speed (2 bytes)
+obVelocity:	equ $14	; potential speed (2 bytes)
 obHeight:	equ $16	; height/2
 obWidth:	equ $17	; width/2
 obPriority:	equ $18	; sprite stack priority -- 0 is front

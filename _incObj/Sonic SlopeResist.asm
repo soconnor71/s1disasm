@@ -14,19 +14,19 @@ Sonic_SlopeResist:
 		jsr	(CalcSine).l
 		muls.w	#$20,d0
 		asr.l	#8,d0
-		tst.w	obInertia(a0)
+		tst.w	obVelocity(a0)
 		beq.s	locret_13508
 		bmi.s	loc_13504
 		tst.w	d0
 		beq.s	locret_13502
-		add.w	d0,obInertia(a0) ; change Sonic's inertia
+		add.w	d0,obVelocity(a0) ; change Sonic's inertia
 
 locret_13502:
 		rts	
 ; ===========================================================================
 
 loc_13504:
-		add.w	d0,obInertia(a0)
+		add.w	d0,obVelocity(a0)
 
 locret_13508:
 		rts	

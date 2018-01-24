@@ -414,12 +414,12 @@ LZSlide_Move:
 loc_3F84:
 		bclr	#0,obStatus(a1)
 		move.b	Slide_Speeds(pc,d1.w),d0
-		move.b	d0,obInertia(a1)
+		move.b	d0,obVelocity(a1)
 		bpl.s	loc_3F9A
 		bset	#0,obStatus(a1)
 
 loc_3F9A:
-		clr.b	obInertia+1(a1)
+		clr.b	obVelocity+1(a1)
 		move.b	#id_WaterSlide,obAnim(a1) ; use Sonic's "sliding" animation
 		move.b	#1,(f_jumponly).w ; lock controls (except jumping)
 		move.b	(v_vbla_byte).w,d0

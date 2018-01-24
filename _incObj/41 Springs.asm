@@ -124,7 +124,7 @@ Spring_BounceLR:
 
 	Spring_Flipped:
 		move.w	#$F,$3E(a1)
-		move.w	obVelX(a1),obInertia(a1)
+		move.w	obVelX(a1),obVelocity(a1)
 		bchg	#0,obStatus(a1)
 		btst	#2,obStatus(a1)
 		bne.s	loc_DC56

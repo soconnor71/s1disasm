@@ -6,44 +6,44 @@
 
 
 Sonic_Jump:
-		move.b	(v_jpadpress2).w,d0
-		andi.b	#btnABC,d0	; is A, B or C pressed?
-		beq.w	locret_1348E	; if not, branch
-		moveq	#0,d0
-		move.b	obAngle(a0),d0
+		move.b	(v_jpadpress2).w,d0     ; get joypad
+		andi.b	#btnABC,d0	        ; is A, B or C pressed?
+		beq.w	locret_1348E	        ; if not, return
+		moveq	#0,d0                   ; clear d0
+		move.b	obAngle(a0),d0          ; get sonics angle
 		addi.b	#$80,d0
 		bsr.w	sub_14D48
 		cmpi.w	#6,d1
 		blt.w	locret_1348E
-		move.w	#$680,d2
-		btst	#6,obStatus(a0)
-		beq.s	loc_1341C
-		move.w	#$380,d2
+		move.w	#$680,d2                ; set jump speed to $680 (6.5 per frame)
+		btst	#6,obStatus(a0)         ; see if sonic in water
+		beq.s	loc_1341C               ; if not jump ahead
+		move.w	#$380,d2                ; otherwise set jump speed to $380 (3.5 per frame)
 
 loc_1341C:
-		moveq	#0,d0
-		move.b	obAngle(a0),d0
-		subi.b	#$40,d0
-		jsr	(CalcSine).l
-		muls.w	d2,d1
-		asr.l	#8,d1
-		add.w	d1,obVelX(a0)	; make Sonic jump
-		muls.w	d2,d0
-		asr.l	#8,d0
-		add.w	d0,obVelY(a0)	; make Sonic jump
-		bset	#1,obStatus(a0)
-		bclr	#5,obStatus(a0)
+		moveq	#0,d0                   ; clear d0
+		move.b	obAngle(a0),d0          ; get sonics angle
+		subi.b	#$40,d0                 ; subtract 90 degrees (we want to jump away from the ground)
+		jsr	(CalcSine).l            ; calc angle
+		muls.w	d2,d1                   ; get x component of jump x, = vel * cos(angle)
+		asr.l	#8,d1                   ; remove any fractional part
+		add.w	d1,obVelX(a0)	        ; save x velocity
+		muls.w	d2,d0                   ; get y component of jump, y = vel * sin(angle)
+		asr.l	#8,d0                   ; remove fractional part
+		add.w	d0,obVelY(a0)	        ; save y velocity
+		bset	#1,obStatus(a0)         ; set jumping flag
+		bclr	#5,obStatus(a0)         ; clear pushing flag
 		addq.l	#4,sp
-		move.b	#1,$3C(a0)
+		move.b	#1,$3C(a0)              ; set jumping flag
 		clr.b	$38(a0)
-		sfx	sfx_Jump,0,0,0	; play jumping sound
-		move.b	#$13,obHeight(a0)
-		move.b	#9,obWidth(a0)
-		btst	#2,obStatus(a0)
-		bne.s	loc_13490
+		sfx	sfx_Jump,0,0,0	        ; play jumping sound
+		move.b	#$13,obHeight(a0)       ; set sonics height to be 19
+		move.b	#9,obWidth(a0)          ; set sonics width to be 9
+		btst	#2,obStatus(a0)         ; see if rolling
+		bne.s	loc_13490               ; if so branch
 		move.b	#$E,obHeight(a0)
 		move.b	#7,obWidth(a0)
-		move.b	#id_Roll,obAnim(a0) ; use "jumping" animation
+		move.b	#id_Roll,obAnim(a0)     ; use "jumping" animation
 		bset	#2,obStatus(a0)
 		addq.w	#5,obY(a0)
 
@@ -52,6 +52,6 @@ locret_1348E:
 ; ===========================================================================
 
 loc_13490:
-		bset	#4,obStatus(a0)
+		bset	#4,obStatus(a0)         ; set jumping after rolling flag
 		rts	
 ; End of function Sonic_Jump

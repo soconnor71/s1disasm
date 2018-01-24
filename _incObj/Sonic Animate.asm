@@ -95,7 +95,7 @@ Sonic_Animate:
 
 		lsr.b	#4,d0		; divide angle by $10
 		andi.b	#6,d0		; angle	must be	0, 2, 4	or 6
-		move.w	obInertia(a0),d2 ; get Sonic's speed
+		move.w	obVelocity(a0),d2 ; get Sonic's speed
 		bpl.s	@nomodspeed
 		neg.w	d2		; modulus speed
 
@@ -128,7 +128,7 @@ Sonic_Animate:
 @rolljump:
 		addq.b	#1,d0		; is animation rolling/jumping?
 		bne.s	@push		; if not, branch
-		move.w	obInertia(a0),d2 ; get Sonic's speed
+		move.w	obVelocity(a0),d2 ; get Sonic's speed
 		bpl.s	@nomodspeed2
 		neg.w	d2
 
@@ -155,7 +155,7 @@ Sonic_Animate:
 ; ===========================================================================
 
 @push:
-		move.w	obInertia(a0),d2 ; get Sonic's speed
+		move.w	obVelocity(a0),d2 ; get Sonic's speed
 		bmi.s	@negspeed
 		neg.w	d2
 

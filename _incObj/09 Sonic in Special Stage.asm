@@ -94,7 +94,7 @@ loc_1BA78:
 		move.b	(v_jpadhold2).w,d0
 		andi.b	#btnL+btnR,d0
 		bne.s	loc_1BAA8
-		move.w	obInertia(a0),d0
+		move.w	obVelocity(a0),d0
 		beq.s	loc_1BAA8
 		bmi.s	loc_1BA9A
 		subi.w	#$C,d0
@@ -102,7 +102,7 @@ loc_1BA78:
 		move.w	#0,d0
 
 loc_1BA94:
-		move.w	d0,obInertia(a0)
+		move.w	d0,obVelocity(a0)
 		bra.s	loc_1BAA8
 ; ===========================================================================
 
@@ -112,7 +112,7 @@ loc_1BA9A:
 		move.w	#0,d0
 
 loc_1BAA4:
-		move.w	d0,obInertia(a0)
+		move.w	d0,obVelocity(a0)
 
 loc_1BAA8:
 		move.b	(v_ssangle).w,d0
@@ -120,9 +120,9 @@ loc_1BAA8:
 		andi.b	#$C0,d0
 		neg.b	d0
 		jsr	(CalcSine).l
-		muls.w	obInertia(a0),d1
+		muls.w	obVelocity(a0),d1
 		add.l	d1,obX(a0)
-		muls.w	obInertia(a0),d0
+		muls.w	obVelocity(a0),d0
 		add.l	d0,obY(a0)
 		movem.l	d0-d1,-(sp)
 		move.l	obY(a0),d2
@@ -132,7 +132,7 @@ loc_1BAA8:
 		movem.l	(sp)+,d0-d1
 		sub.l	d1,obX(a0)
 		sub.l	d0,obY(a0)
-		move.w	#0,obInertia(a0)
+		move.w	#0,obVelocity(a0)
 		rts	
 ; ===========================================================================
 
@@ -147,7 +147,7 @@ loc_1BAF2:
 
 Obj09_MoveLeft:
 		bset	#0,obStatus(a0)
-		move.w	obInertia(a0),d0
+		move.w	obVelocity(a0),d0
 		beq.s	loc_1BB06
 		bpl.s	loc_1BB1A
 
@@ -158,7 +158,7 @@ loc_1BB06:
 		move.w	#-$800,d0
 
 loc_1BB14:
-		move.w	d0,obInertia(a0)
+		move.w	d0,obVelocity(a0)
 		rts	
 ; ===========================================================================
 
@@ -168,7 +168,7 @@ loc_1BB1A:
 		nop	
 
 loc_1BB22:
-		move.w	d0,obInertia(a0)
+		move.w	d0,obVelocity(a0)
 		rts	
 ; End of function Obj09_MoveLeft
 
@@ -178,7 +178,7 @@ loc_1BB22:
 
 Obj09_MoveRight:
 		bclr	#0,obStatus(a0)
-		move.w	obInertia(a0),d0
+		move.w	obVelocity(a0),d0
 		bmi.s	loc_1BB48
 		addi.w	#$C,d0
 		cmpi.w	#$800,d0
@@ -186,7 +186,7 @@ Obj09_MoveRight:
 		move.w	#$800,d0
 
 loc_1BB42:
-		move.w	d0,obInertia(a0)
+		move.w	d0,obVelocity(a0)
 		bra.s	locret_1BB54
 ; ===========================================================================
 
@@ -196,7 +196,7 @@ loc_1BB48:
 		nop	
 
 loc_1BB50:
-		move.w	d0,obInertia(a0)
+		move.w	d0,obVelocity(a0)
 
 locret_1BB54:
 		rts	

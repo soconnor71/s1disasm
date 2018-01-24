@@ -14,14 +14,14 @@ Sonic_RollRepel:
 		jsr	(CalcSine).l
 		muls.w	#$50,d0
 		asr.l	#8,d0
-		tst.w	obInertia(a0)
+		tst.w	obVelocity(a0)
 		bmi.s	loc_1353A
 		tst.w	d0
 		bpl.s	loc_13534
 		asr.l	#2,d0
 
 loc_13534:
-		add.w	d0,obInertia(a0)
+		add.w	d0,obVelocity(a0)
 		rts	
 ; ===========================================================================
 
@@ -31,7 +31,7 @@ loc_1353A:
 		asr.l	#2,d0
 
 loc_13540:
-		add.w	d0,obInertia(a0)
+		add.w	d0,obVelocity(a0)
 
 locret_13544:
 		rts	

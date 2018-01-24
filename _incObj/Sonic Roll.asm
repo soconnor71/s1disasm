@@ -8,7 +8,7 @@
 Sonic_Roll:
 		tst.b	(f_jumponly).w
 		bne.s	@noroll
-		move.w	obInertia(a0),d0
+		move.w	obVelocity(a0),d0
 		bpl.s	@ispositive
 		neg.w	d0
 
@@ -38,9 +38,9 @@ Sonic_ChkRoll:
 		move.b	#id_Roll,obAnim(a0) ; use "rolling" animation
 		addq.w	#5,obY(a0)
 		sfx	sfx_Roll,0,0,0	; play rolling sound
-		tst.w	obInertia(a0)
+		tst.w	obVelocity(a0)
 		bne.s	@ismoving
-		move.w	#$200,obInertia(a0) ; set inertia if 0
+		move.w	#$200,obVelocity(a0) ; set inertia if 0
 
 	@ismoving:
 		rts	

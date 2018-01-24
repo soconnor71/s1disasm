@@ -65,7 +65,7 @@ loc_1361E:
 
 loc_1364E:
 		move.w	#0,obVelY(a0)
-		move.w	obVelX(a0),obInertia(a0)
+		move.w	obVelX(a0),obVelocity(a0)
 		rts	
 ; ===========================================================================
 
@@ -76,10 +76,10 @@ loc_1365C:
 		move.w	#$FC0,obVelY(a0)
 
 loc_13670:
-		move.w	obVelY(a0),obInertia(a0)
+		move.w	obVelY(a0),obVelocity(a0)
 		tst.b	d3
 		bpl.s	locret_1367E
-		neg.w	obInertia(a0)
+		neg.w	obVelocity(a0)
 
 locret_1367E:
 		rts	
@@ -91,7 +91,7 @@ loc_13680:
 		bpl.s	loc_1369A
 		sub.w	d1,obX(a0)
 		move.w	#0,obVelX(a0)
-		move.w	obVelY(a0),obInertia(a0)
+		move.w	obVelY(a0),obVelocity(a0)
 		rts	
 ; ===========================================================================
 
@@ -119,7 +119,7 @@ loc_136B4:
 		bsr.w	Sonic_ResetOnFloor
 		move.b	#id_Walk,obAnim(a0)
 		move.w	#0,obVelY(a0)
-		move.w	obVelX(a0),obInertia(a0)
+		move.w	obVelX(a0),obVelocity(a0)
 
 locret_136E0:
 		rts	
@@ -155,10 +155,10 @@ loc_13706:
 loc_13726:
 		move.b	d3,obAngle(a0)
 		bsr.w	Sonic_ResetOnFloor
-		move.w	obVelY(a0),obInertia(a0)
+		move.w	obVelY(a0),obVelocity(a0)
 		tst.b	d3
 		bpl.s	locret_1373C
-		neg.w	obInertia(a0)
+		neg.w	obVelocity(a0)
 
 locret_1373C:
 		rts	
@@ -170,7 +170,7 @@ loc_1373E:
 		bpl.s	loc_13758
 		add.w	d1,obX(a0)
 		move.w	#0,obVelX(a0)
-		move.w	obVelY(a0),obInertia(a0)
+		move.w	obVelY(a0),obVelocity(a0)
 		rts	
 ; ===========================================================================
 
@@ -198,7 +198,7 @@ loc_13772:
 		bsr.w	Sonic_ResetOnFloor
 		move.b	#id_Walk,obAnim(a0)
 		move.w	#0,obVelY(a0)
-		move.w	obVelX(a0),obInertia(a0)
+		move.w	obVelX(a0),obVelocity(a0)
 
 locret_1379E:
 		rts	

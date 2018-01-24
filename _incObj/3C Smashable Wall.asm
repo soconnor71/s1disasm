@@ -59,7 +59,7 @@ Smash_Solid:	; Routine 2
 		lea	(Smash_FragSpd2).l,a4 ;	use fragments that move	left
 
 	@smash:
-		move.w	obVelX(a1),obInertia(a1)
+		move.w	obVelX(a1),obVelocity(a1)
 		bclr	#5,obStatus(a0)
 		bclr	#5,obStatus(a1)
 		moveq	#7,d1		; load 8 fragments

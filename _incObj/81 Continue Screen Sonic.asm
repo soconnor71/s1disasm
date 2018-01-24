@@ -54,18 +54,18 @@ CSon_GetUp:
 		move.l	#Map_Sonic,obMap(a0)
 		move.w	#$780,obGfx(a0)
 		move.b	#id_Float4,obAnim(a0) ; use "getting up" animation
-		clr.w	obInertia(a0)
+		clr.w	obVelocity(a0)
 		subq.w	#8,obY(a0)
 		sfx	bgm_Fade,0,1,1 ; fade out music
 
 CSon_Run:	; Routine 6
-		cmpi.w	#$800,obInertia(a0) ; check Sonic's inertia
+		cmpi.w	#$800,obVelocity(a0) ; check Sonic's inertia
 		bne.s	CSon_AddInertia	; if too low, branch
 		move.w	#$1000,obVelX(a0) ; move Sonic to the right
 		bra.s	CSon_ShowRun
 
 CSon_AddInertia:
-		addi.w	#$20,obInertia(a0) ; increase inertia
+		addi.w	#$20,obVelocity(a0) ; increase inertia
 
 CSon_ShowRun:
 		jsr	(SpeedToPos).l

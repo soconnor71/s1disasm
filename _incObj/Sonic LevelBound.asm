@@ -6,10 +6,10 @@
 
 
 Sonic_LevelBound:
-		move.l	obX(a0),d1
-		move.w	obVelX(a0),d0
-		ext.l	d0
-		asl.l	#8,d0
+		move.l	obX(a0),d1              ; get x position
+		move.w	obVelX(a0),d0           ; get x pixel velocity
+		ext.l	d0                      ; extend
+		asl.l	#8,d0                   ;
 		add.l	d0,d1
 		swap	d1
 		move.w	(v_limitleft2).w,d0
@@ -49,6 +49,6 @@ Sonic_LevelBound:
 		move.w	d0,obX(a0)
 		move.w	#0,obX+2(a0)
 		move.w	#0,obVelX(a0)	; stop Sonic moving
-		move.w	#0,obInertia(a0)
+		move.w	#0,obVelocity(a0)
 		bra.s	@chkbottom
 ; End of function Sonic_LevelBound

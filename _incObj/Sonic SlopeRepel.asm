@@ -15,14 +15,14 @@ Sonic_SlopeRepel:
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
 		beq.s	locret_13580
-		move.w	obInertia(a0),d0
+		move.w	obVelocity(a0),d0
 		bpl.s	loc_1356A
 		neg.w	d0
 
 loc_1356A:
 		cmpi.w	#$280,d0
 		bcc.s	locret_13580
-		clr.w	obInertia(a0)
+		clr.w	obVelocity(a0)
 		bset	#1,obStatus(a0)
 		move.w	#$1E,$3E(a0)
 

@@ -26,7 +26,7 @@ Sonic_RollSpeed:
 		bsr.w	Sonic_RollRight
 
 	@notright:
-		move.w	obInertia(a0),d0
+		move.w	obVelocity(a0),d0
 		beq.s	loc_131AA
 		bmi.s	loc_1319E
 		sub.w	d5,d0
@@ -34,7 +34,7 @@ Sonic_RollSpeed:
 		move.w	#0,d0
 
 loc_13198:
-		move.w	d0,obInertia(a0)
+		move.w	d0,obVelocity(a0)
 		bra.s	loc_131AA
 ; ===========================================================================
 
@@ -44,10 +44,10 @@ loc_1319E:
 		move.w	#0,d0
 
 loc_131A6:
-		move.w	d0,obInertia(a0)
+		move.w	d0,obVelocity(a0)
 
 loc_131AA:
-		tst.w	obInertia(a0)	; is Sonic moving?
+		tst.w	obVelocity(a0)	; is Sonic moving?
 		bne.s	loc_131CC	; if yes, branch
 		bclr	#2,obStatus(a0)
 		move.b	#$13,obHeight(a0)
@@ -58,10 +58,10 @@ loc_131AA:
 loc_131CC:
 		move.b	obAngle(a0),d0
 		jsr	(CalcSine).l
-		muls.w	obInertia(a0),d0
+		muls.w	obVelocity(a0),d0
 		asr.l	#8,d0
 		move.w	d0,obVelY(a0)
-		muls.w	obInertia(a0),d1
+		muls.w	obVelocity(a0),d1
 		asr.l	#8,d1
 		cmpi.w	#$1000,d1
 		ble.s	loc_131F0
@@ -82,7 +82,7 @@ loc_131FA:
 
 
 Sonic_RollLeft:
-		move.w	obInertia(a0),d0
+		move.w	obVelocity(a0),d0
 		beq.s	loc_1320A
 		bpl.s	loc_13218
 
@@ -98,7 +98,7 @@ loc_13218:
 		move.w	#-$80,d0
 
 loc_13220:
-		move.w	d0,obInertia(a0)
+		move.w	d0,obVelocity(a0)
 		rts	
 ; End of function Sonic_RollLeft
 
@@ -107,7 +107,7 @@ loc_13220:
 
 
 Sonic_RollRight:
-		move.w	obInertia(a0),d0
+		move.w	obVelocity(a0),d0
 		bmi.s	loc_1323A
 		bclr	#0,obStatus(a0)
 		move.b	#id_Roll,obAnim(a0) ; use "rolling" animation
@@ -120,6 +120,6 @@ loc_1323A:
 		move.w	#$80,d0
 
 loc_13242:
-		move.w	d0,obInertia(a0)
+		move.w	d0,obVelocity(a0)
 		rts	
 ; End of function Sonic_RollRight

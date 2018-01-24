@@ -239,7 +239,7 @@ Drown_Countdown:; Routine $A
 		bset	#7,obGfx(a0)
 		move.w	#0,obVelY(a0)
 		move.w	#0,obVelX(a0)
-		move.w	#0,obInertia(a0)
+		move.w	#0,obVelocity(a0)
 		move.b	#1,(f_nobgscroll).w
 		movea.l	(sp)+,a0
 		rts	

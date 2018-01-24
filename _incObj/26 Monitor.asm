@@ -108,7 +108,7 @@ loc_A230:
 
 loc_A236:
 		sub.w	d0,obX(a1)
-		move.w	#0,obInertia(a1)
+		move.w	#0,obVelocity(a1)
 		move.w	#0,obVelX(a1)
 
 loc_A246:

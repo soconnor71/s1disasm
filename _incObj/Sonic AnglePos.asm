@@ -6,11 +6,11 @@
 
 
 Sonic_AnglePos:
-		btst	#3,obStatus(a0)
-		beq.s	loc_14602
-		moveq	#0,d0
-		move.b	d0,($FFFFF768).w
-		move.b	d0,($FFFFF76A).w
+		btst	#3,obStatus(a0)         ; is sonic in the air but shouldn't fall as he is touching an object not a tile
+		beq.s	loc_14602               ; if not continue on
+		moveq	#0,d0                   ; otherwise clear d0
+		move.b	d0,($FFFFF768).w        ; set left angle to 0
+		move.b	d0,($FFFFF76A).w        ; set right angle to 0
 		rts	
 ; ===========================================================================
 

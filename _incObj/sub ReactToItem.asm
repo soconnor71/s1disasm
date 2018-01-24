@@ -289,7 +289,7 @@ HurtSonic:
 		neg.w	obVelX(a0)	; if Sonic is right of the object, reverse
 
 	@isleft:
-		move.w	#0,obInertia(a0)
+		move.w	#0,obVelocity(a0)
 		move.b	#id_Hurt,obAnim(a0)
 		move.w	#120,$30(a0)	; set temp invincible time to 2 seconds
 		move.w	#sfx_Death,d0	; load normal damage sound
@@ -325,7 +325,7 @@ KillSonic:
 		bset	#1,obStatus(a0)
 		move.w	#-$700,obVelY(a0)
 		move.w	#0,obVelX(a0)
-		move.w	#0,obInertia(a0)
+		move.w	#0,obVelocity(a0)
 		move.w	obY(a0),$38(a0)
 		move.b	#id_Death,obAnim(a0)
 		bset	#7,obGfx(a0)

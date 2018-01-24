@@ -147,11 +147,11 @@ Cat_Index2:	dc.w @wait-Cat_Index2
 		addq.b	#2,ob2ndRout(a0)
 		move.b	#$10,$2A(a0)
 		move.w	#-$C0,obVelX(a0)
-		move.w	#$40,obInertia(a0)
+		move.w	#$40,obVelocity(a0)
 		bchg	#4,$2B(a0)
 		bne.s	loc_16AFC
 		clr.w	obVelX(a0)
-		neg.w	obInertia(a0)
+		neg.w	obVelocity(a0)
 
 loc_16AFC:
 		bset	#7,$2B(a0)
@@ -217,7 +217,7 @@ loc_16B02:
 		move.w	#0,obVelX(a0)
 		else
 			clr.w	obVelX(a0)
-			clr.w	obInertia(a0)
+			clr.w	obVelocity(a0)
 		endc
 		rts	
 ; ===========================================================================
@@ -276,12 +276,12 @@ Cat_BodySeg1:	; Routine 4, 8
 		move.b	$2B(a1),$2B(a0)
 		move.b	ob2ndRout(a1),ob2ndRout(a0)
 		beq.w	loc_16C64
-		move.w	obInertia(a1),obInertia(a0)
+		move.w	obVelocity(a1),obVelocity(a0)
 		move.w	obVelX(a1),d0
 		if Revision=0
-		add.w	obInertia(a1),d0
+		add.w	obVelocity(a1),d0
 		else
-			add.w	obInertia(a0),d0
+			add.w	obVelocity(a0),d0
 		endc
 		move.w	d0,obVelX(a0)
 		move.l	obX(a0),d2

@@ -183,7 +183,7 @@ Solid_Right:
 		bpl.s	Solid_Centre	; if yes, branch
 
 Solid_Left:
-		move.w	#0,obInertia(a1)
+		move.w	#0,obVelocity(a1)
 		move.w	#0,obVelX(a1)	; stop Sonic moving
 
 Solid_Centre:
@@ -300,7 +300,7 @@ Solid_ResetFloor:
 		move.b	d0,$3D(a1)	; set object being stood on
 		move.b	#0,obAngle(a1)	; clear Sonic's angle
 		move.w	#0,obVelY(a1)	; stop Sonic
-		move.w	obVelX(a1),obInertia(a1)
+		move.w	obVelX(a1),obVelocity(a1)
 		btst	#1,obStatus(a1)	; is Sonic in the air?
 		beq.s	@notinair	; if not, branch
 		move.l	a0,-(sp)

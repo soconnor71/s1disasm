@@ -334,7 +334,7 @@ loc_C268:
 loc_C294:
 		lea	(v_player).w,a1
 		add.w	d0,obX(a1)
-		move.w	d1,obInertia(a1)
+		move.w	d1,obVelocity(a1)
 		move.w	#0,obVelX(a1)
 		move.w	d0,-(sp)
 		sfx	sfx_Push,0,0,0	 ; play pushing sound

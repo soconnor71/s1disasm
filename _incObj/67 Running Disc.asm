@@ -95,19 +95,19 @@ loc_155D0:
 		move.b	#1,$38(a1)
 
 loc_155E2:
-		move.w	obInertia(a1),d0
+		move.w	obVelocity(a1),d0
 		tst.w	$36(a0)
 		bpl.s	loc_15608
 		cmpi.w	#-$400,d0
 		ble.s	loc_155FA
-		move.w	#-$400,obInertia(a1)
+		move.w	#-$400,obVelocity(a1)
 		rts	
 ; ===========================================================================
 
 loc_155FA:
 		cmpi.w	#-$F00,d0
 		bge.s	locret_15606
-		move.w	#-$F00,obInertia(a1)
+		move.w	#-$F00,obVelocity(a1)
 
 locret_15606:
 		rts	
@@ -116,14 +116,14 @@ locret_15606:
 loc_15608:
 		cmpi.w	#$400,d0
 		bge.s	loc_15616
-		move.w	#$400,obInertia(a1)
+		move.w	#$400,obVelocity(a1)
 		rts	
 ; ===========================================================================
 
 loc_15616:
 		cmpi.w	#$F00,d0
 		ble.s	locret_15622
-		move.w	#$F00,obInertia(a1)
+		move.w	#$F00,obVelocity(a1)
 
 locret_15622:
 		rts	
