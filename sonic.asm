@@ -6871,7 +6871,7 @@ Sonic_MdInAir:                                  ; called when sonic is in the ai
 		subi.w	#$28,obVelY(a0)         ; else add $0028 to y velocity
 
 loc_12E5C:
-		bsr.w	Sonic_JumpAngle
+		bsr.w	Sonic_JumpAngle         ; adjust sonic's angle each frame so that we return to zero angle
 		bsr.w	Sonic_Floor
 		rts	
 ; ===========================================================================
@@ -6892,12 +6892,12 @@ Sonic_MdInAir2:                                 ; called when sonic is rolling a
 		bsr.w	Sonic_JumpDirection
 		bsr.w	Sonic_LevelBound        ; make sure sonic stays within level
 		jsr	(ObjectFall).l          ; add gravity, then add velocity to position to get new position
-		btst	#6,obStatus(a0)
-		beq.s	loc_12EA6
-		subi.w	#$28,obVelY(a0)
+		btst	#6,obStatus(a0)         ; see if underwater
+		beq.s	loc_12EA6               ; if not continue
+		subi.w	#$28,obVelY(a0)         ; add #0028 to y velocity
 
 loc_12EA6:
-		bsr.w	Sonic_JumpAngle
+		bsr.w	Sonic_JumpAngle         ; adjust sonic's angle each frame so that we return to zero angle
 		bsr.w	Sonic_Floor
 		rts	
 
