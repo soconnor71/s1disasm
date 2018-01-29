@@ -6795,7 +6795,7 @@ loc_12C64:
 		bne.s	loc_12C7E	        ; if yes, branch
 		moveq	#0,d0                   ; clear d0
 		move.b	obStatus(a0),d0         ; get status flags into d0
-		andi.w	#6,d0                   ; consider just bits 1 and 2 (in air, or rolling/jumping) (00=normal, 01=jumping, 10=rolling, 11=rolling and jumping)
+		andi.w	#6,d0                   ; consider just bits 1 and 2 (in air, or rolling/jumping) (00=normal, 01=in air, 10=rolling, 11=rolling and in air)
 		move.w	Sonic_Modes(pc,d0.w),d1 ; get mode offset
 		jsr	Sonic_Modes(pc,d1.w)    ; jump to the correct mode
 
@@ -6823,9 +6823,9 @@ loc_12CB6:
 		rts	
 ; ===========================================================================
 Sonic_Modes:	dc.w Sonic_MdNormal-Sonic_Modes
-		dc.w Sonic_MdJump-Sonic_Modes
+		dc.w Sonic_MdInAir-Sonic_Modes
 		dc.w Sonic_MdRoll-Sonic_Modes
-		dc.w Sonic_MdJump2-Sonic_Modes
+		dc.w Sonic_MdInAir2-Sonic_Modes
 ; ---------------------------------------------------------------------------
 ; Music	to play	after invincibility wears off
 ; ---------------------------------------------------------------------------
@@ -6856,13 +6856,13 @@ Sonic_MdNormal:                                 ; called when sonic is in a norm
 		bsr.w	Sonic_Roll              ; see if sonic is trying to roll
 		bsr.w	Sonic_LevelBound        ; make sure sonic stays in level
 		jsr	(SpeedToPos).l          ; add velocity to position
-		bsr.w	Sonic_AnglePos
+		bsr.w	Sonic_AnglePos          ; moves sonic to the floor and sets his angle. If no floor found, sets in air flag
 		bsr.w	Sonic_SlopeRepel
 		rts	
 ; ===========================================================================
 
-Sonic_MdJump:                                   ; called when sonic is jumping
-		bsr.w	Sonic_JumpHeight        ; if button not being pressed, reduce vertical velocity
+Sonic_MdInAir:                                  ; called when sonic is in the air
+		bsr.w	Sonic_JumpHeight        ; if jumping see if jump button released, if so reduce vertical velocity
 		bsr.w	Sonic_JumpDirection
 		bsr.w	Sonic_LevelBound        ; make sure sonic stays within bounds of level
 		jsr	(ObjectFall).l          ; add gravity, then add velocity to position to get new position
@@ -6887,7 +6887,7 @@ Sonic_MdRoll:                                   ; called when sonic is rolling
 		rts	
 ; ===========================================================================
 
-Sonic_MdJump2:                                  ; called when sonic is rolling and jumping
+Sonic_MdInAir2:                                 ; called when sonic is rolling and in air
 		bsr.w	Sonic_JumpHeight        ; if button not being pressed reduce vertical velocity
 		bsr.w	Sonic_JumpDirection
 		bsr.w	Sonic_LevelBound        ; make sure sonic stays within level
