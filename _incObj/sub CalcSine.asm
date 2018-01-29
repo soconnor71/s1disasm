@@ -23,8 +23,17 @@ CalcSine:
 ; End of function CalcSine
 
 ; ===========================================================================
+; the sine table data conists of 256 words, representing angles from $00 to $ff
+; to convert hex value to degrees = val/256 * 360 is the corresponding
+; degree value
+; the table returns results in the range from $0000 to $0100
+; the lower byte of the word is the fractional part
+; the upper byte is the whole part
+; so $0000 = 0.0
+;    $0100 = 1.0
+;    $0180 = 1.5 etc
 
-Sine_Data:	incbin	"misc\sinewave.bin"	; values for a 360� sine wave
+Sine_Data:	incbin	"misc\sinewave.bin"	; values for a 360 degree sine wave
 
 ; ===========================================================================
 

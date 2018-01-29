@@ -11,7 +11,7 @@ Sonic_Jump:
 		beq.w	locret_1348E	        ; if not, return
 		moveq	#0,d0                   ; clear d0
 		move.b	obAngle(a0),d0          ; get sonics angle
-		addi.b	#$80,d0
+		addi.b	#$80,d0                 ; add 180 degrees (flip direction)
 		bsr.w	sub_14D48
 		cmpi.w	#6,d1
 		blt.w	locret_1348E
@@ -31,9 +31,9 @@ loc_1341C:
 		muls.w	d2,d0                   ; get y component of jump, y = vel * sin(angle)
 		asr.l	#8,d0                   ; remove fractional part
 		add.w	d0,obVelY(a0)	        ; save y velocity
-		bset	#1,obStatus(a0)         ; set jumping flag
+		bset	#1,obStatus(a0)         ; set sonic in the air
 		bclr	#5,obStatus(a0)         ; clear pushing flag
-		addq.l	#4,sp
+		addq.l	#4,sp                   ; this will cause us to return to the previous function before the function that called this one, this will stop us doing the rest of the modes for this frame
 		move.b	#1,$3C(a0)              ; set jumping flag
 		clr.b	$38(a0)
 		sfx	sfx_Jump,0,0,0	        ; play jumping sound
@@ -41,11 +41,11 @@ loc_1341C:
 		move.b	#9,obWidth(a0)          ; set sonics width to be 9
 		btst	#2,obStatus(a0)         ; see if rolling
 		bne.s	loc_13490               ; if so branch
-		move.b	#$E,obHeight(a0)
-		move.b	#7,obWidth(a0)
+		move.b	#$E,obHeight(a0)        ; change height
+		move.b	#7,obWidth(a0)          ; change width
 		move.b	#id_Roll,obAnim(a0)     ; use "jumping" animation
-		bset	#2,obStatus(a0)
-		addq.w	#5,obY(a0)
+		bset	#2,obStatus(a0)         ; set jumping status flag
+		addq.w	#5,obY(a0)              ; set offset to y so sonic stays in same place relative to where he was
 
 locret_1348E:
 		rts	
@@ -53,5 +53,5 @@ locret_1348E:
 
 loc_13490:
 		bset	#4,obStatus(a0)         ; set jumping after rolling flag
-		rts	
+		rts	                        ; return
 ; End of function Sonic_Jump

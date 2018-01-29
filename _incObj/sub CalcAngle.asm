@@ -64,7 +64,7 @@ loc_2CFE:
 ; ===========================================================================
 
 loc_2D04:
-		move.w	#$40,d0
+		move.w	#$40,d0         ; set angle
 		movem.l	(sp)+,d3-d4
 		rts	
 ; End of function CalcAngle

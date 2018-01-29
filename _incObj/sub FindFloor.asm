@@ -61,44 +61,44 @@ FindFloor:
 		move.w	d3,d1		        ; get x-pos. of object
 		btst	#$B,d4		        ; is block flipped horizontally?
 		beq.s	@noflip		        ; if not, branch
-		not.w	d1
-		neg.b	(a4)
+		not.w	d1                  ; invert x-position
+		neg.b	(a4)                ; negate angle to flip in x-axis
 
 	@noflip:
-		btst	#$C,d4		; is block flipped vertically?
-		beq.s	@noflip2	; if not, branch
-		addi.b	#$40,(a4)
-		neg.b	(a4)
-		subi.b	#$40,(a4)
+		btst	#$C,d4		        ; see if y bit set to see if we need to flip vertically
+		beq.s	@noflip2	        ; if not, branch
+		addi.b	#$40,(a4)           ; add 90 degrees to angle
+		neg.b	(a4)                ; negate angle
+		subi.b	#$40,(a4)           ; subtract 90 degrees, basically this flips angle in y direction
 
 	@noflip2:
-		andi.w	#$F,d1
-		add.w	d0,d1		; (block num. * $10) + x-pos. = place in array
-		lea	(CollArray1).l,a2
-		move.b	(a2,d1.w),d0	; get collision height
-		ext.w	d0
-		eor.w	d6,d4
-		btst	#$C,d4		; is block flipped vertically?
-		beq.s	@noflip3	; if not, branch
-		neg.w	d0
+		andi.w	#$F,d1              ; extract only the lower 4 bits of x-position to find position within tile (0-15)
+		add.w	d0,d1		        ; add x-position into tile to height map base address to get height at x -location
+		lea	(CollArray1).l,a2       ; get base address
+		move.b	(a2,d1.w),d0	    ; get height value from map
+		ext.w	d0                  ; extend to word
+		eor.w	d6,d4               ; the tile meta data is xor'd here with d6. This allows us to toggle the y flip status if sonic is upside down
+		btst	#$C,d4		        ; test y-bit again to see if we need to flip in vertical
+		beq.s	@noflip3	        ; if not, branch
+		neg.w	d0                  ; negate the height value from the map
 
 	@noflip3:
-		tst.w	d0
-		beq.s	@isblank	; branch if height is 0
-		bmi.s	@negfloor	; branch if height is negative
-		cmpi.b	#$10,d0
-		beq.s	@maxfloor	; branch if height is $10 (max)
-		move.w	d2,d1		; get y-pos. of object
-		andi.w	#$F,d1
-		add.w	d1,d0
-		move.w	#$F,d1
-		sub.w	d0,d1		; return distance to floor
+		tst.w	d0                  ; test height map value (basically compare to zero)
+		beq.s	@isblank	        ; if zero, then go check next tile below this one
+		bmi.s	@negfloor	        ; if value is negative, then go handle specially
+		cmpi.b	#$10,d0             ; see if value $10,
+		beq.s	@maxfloor	        ; if so then we need to inspect the tile above this one
+		move.w	d2,d1		        ; get y-pos. of object
+		andi.w	#$F,d1              ; extract lower 4 bits, which limits it to the y position within tile (0-15)
+		add.w	d1,d0               ; tile height is based from bottom of tile, y position is based from top of tile, so ypos - (15 - tile height) = ypos+
+		move.w	#$F,d1              ; put 15 into d1
+		sub.w	d0,d1		        ; 15-(d0+d1) = 15 - ypos - yheight
 		rts	
 ; ===========================================================================
 
 @negfloor:
-		move.w	d2,d1
-		andi.w	#$F,d1
+		move.w	d2,d1               ; get y position into d1
+		andi.w	#$F,d1              ; mask out lower 4 bits to get position into tile (0-15)
 		add.w	d1,d0
 		bpl.w	@isblank
 

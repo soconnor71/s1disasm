@@ -15,12 +15,12 @@ Sonic_AnglePos:
 ; ===========================================================================
 
 loc_14602:
-		moveq	#3,d0
-		move.b	d0,($FFFFF768).w
-		move.b	d0,($FFFFF76A).w
-		move.b	obAngle(a0),d0
-		addi.b	#$20,d0
-		bpl.s	loc_14624
+		moveq	#3,d0               ; set angle to 3 degrees
+		move.b	d0,($FFFFF768).w    ; set left angle to 3 degrees
+		move.b	d0,($FFFFF76A).w    ; set right angle to 3 degrees
+		move.b	obAngle(a0),d0      ; get the current angle of the object into d0
+		addi.b	#$20,d0             ; add 45 degrees
+		bpl.s	loc_14624           ; if less than 180 degrees skip ahead
 		move.b	obAngle(a0),d0
 		bpl.s	loc_1461E
 		subq.b	#1,d0

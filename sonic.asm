@@ -6786,18 +6786,18 @@ Sonic_Control:	; Routine 2
 ; ===========================================================================
 
 loc_12C58:
-		tst.b	(f_lockctrl).w	; are controls locked?
-		bne.s	loc_12C64	; if yes, branch
+		tst.b	(f_lockctrl).w	                ; are controls locked?
+		bne.s	loc_12C64	                ; if yes, continue
 		move.w	(v_jpadhold1).w,(v_jpadhold2).w ; enable joypad control
 
 loc_12C64:
-		btst	#0,(f_lockmulti).w ; are controls locked?
-		bne.s	loc_12C7E	; if yes, branch
-		moveq	#0,d0
-		move.b	obStatus(a0),d0
-		andi.w	#6,d0
-		move.w	Sonic_Modes(pc,d0.w),d1
-		jsr	Sonic_Modes(pc,d1.w)
+		btst	#0,(f_lockmulti).w      ; are controls locked?
+		bne.s	loc_12C7E	        ; if yes, branch
+		moveq	#0,d0                   ; clear d0
+		move.b	obStatus(a0),d0         ; get status flags into d0
+		andi.w	#6,d0                   ; consider just bits 1 and 2 (in air, or rolling/jumping) (00=normal, 01=jumping, 10=rolling, 11=rolling and jumping)
+		move.w	Sonic_Modes(pc,d0.w),d1 ; get mode offset
+		jsr	Sonic_Modes(pc,d1.w)    ; jump to the correct mode
 
 loc_12C7E:
 		bsr.s	Sonic_Display
@@ -6849,26 +6849,26 @@ MusicList2:
 ; Modes	for controlling	Sonic
 ; ---------------------------------------------------------------------------
 
-Sonic_MdNormal:
+Sonic_MdNormal:                                 ; called when sonic is in a normal mode
 		bsr.w	Sonic_Jump              ; see if jump pressed, if so set initial jump velocity
 		bsr.w	Sonic_SlopeResist       ; handle sonic resisting a slope
-		bsr.w	Sonic_Move              ; handle sonic movement
-		bsr.w	Sonic_Roll              ; handle sonic rolling
+		bsr.w	Sonic_Move              ; handle sonic movement, adds accel or deccel to sonic based on whether pressing left or right
+		bsr.w	Sonic_Roll              ; see if sonic is trying to roll
 		bsr.w	Sonic_LevelBound        ; make sure sonic stays in level
-		jsr	(SpeedToPos).l
+		jsr	(SpeedToPos).l          ; add velocity to position
 		bsr.w	Sonic_AnglePos
 		bsr.w	Sonic_SlopeRepel
 		rts	
 ; ===========================================================================
 
-Sonic_MdJump:
-		bsr.w	Sonic_JumpHeight
+Sonic_MdJump:                                   ; called when sonic is jumping
+		bsr.w	Sonic_JumpHeight        ; if button not being pressed, reduce vertical velocity
 		bsr.w	Sonic_JumpDirection
-		bsr.w	Sonic_LevelBound        ; make sure sonic stays with bounds of level
-		jsr	(ObjectFall).l
-		btst	#6,obStatus(a0)
-		beq.s	loc_12E5C
-		subi.w	#$28,obVelY(a0)
+		bsr.w	Sonic_LevelBound        ; make sure sonic stays within bounds of level
+		jsr	(ObjectFall).l          ; add gravity, then add velocity to position to get new position
+		btst	#6,obStatus(a0)         ; see if underwater
+		beq.s	loc_12E5C               ; if not continue
+		subi.w	#$28,obVelY(a0)         ; else add $0028 to y velocity
 
 loc_12E5C:
 		bsr.w	Sonic_JumpAngle
@@ -6876,22 +6876,22 @@ loc_12E5C:
 		rts	
 ; ===========================================================================
 
-Sonic_MdRoll:
-		bsr.w	Sonic_Jump
+Sonic_MdRoll:                                   ; called when sonic is rolling
+		bsr.w	Sonic_Jump              ; see if jump pressed, if so add jump velocity to
 		bsr.w	Sonic_RollRepel
 		bsr.w	Sonic_RollSpeed
-		bsr.w	Sonic_LevelBound
-		jsr	(SpeedToPos).l
+		bsr.w	Sonic_LevelBound        ; make sure sonic is
+		jsr	(SpeedToPos).l          ; add velocity to position
 		bsr.w	Sonic_AnglePos
 		bsr.w	Sonic_SlopeRepel
 		rts	
 ; ===========================================================================
 
-Sonic_MdJump2:
-		bsr.w	Sonic_JumpHeight
+Sonic_MdJump2:                                  ; called when sonic is rolling and jumping
+		bsr.w	Sonic_JumpHeight        ; if button not being pressed reduce vertical velocity
 		bsr.w	Sonic_JumpDirection
-		bsr.w	Sonic_LevelBound
-		jsr	(ObjectFall).l
+		bsr.w	Sonic_LevelBound        ; make sure sonic stays within level
+		jsr	(ObjectFall).l          ; add gravity, then add velocity to position to get new position
 		btst	#6,obStatus(a0)
 		beq.s	loc_12EA6
 		subi.w	#$28,obVelY(a0)
