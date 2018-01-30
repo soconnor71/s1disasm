@@ -6,11 +6,11 @@
 
 
 Sonic_RecordPosition:
-		move.w	(v_trackpos).w,d0
-		lea	(v_tracksonic).w,a1
-		lea	(a1,d0.w),a1
-		move.w	obX(a0),(a1)+
-		move.w	obY(a0),(a1)+
-		addq.b	#4,(v_trackbyte).w
-		rts	
+		move.w	(v_trackpos).w,d0       ; current pointer into track buffer
+		lea	(v_tracksonic).w,a1     ; get start of buffer
+		lea	(a1,d0.w),a1            ; add offset into track buffer
+		move.w	obX(a0),(a1)+           ; store x position
+		move.w	obY(a0),(a1)+           ; store y position
+		addq.b	#4,(v_trackbyte).w      ; advance track buffer pointer by 4 bytes (2 words) to point to next slot
+		rts	                        ; return
 ; End of function Sonic_RecordPosition

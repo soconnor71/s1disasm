@@ -21,3 +21,11 @@ SpeedToPos:
 		rts	
 
 ; End of function SpeedToPos
+
+;
+; obX = ppppssss    i.e. 4 bytes of pixel information and 4 bytes of subpixel
+; obVelX =  ppss    i.e. 2 bytes of pixel, 2 bytes of subpixel
+;
+; therefore obVelX is loaded into longword, sign extended and then shifted 8 pixels to align with obX
+; obx =             ppppssss
+; adjustedObVelX =  00ppss00
